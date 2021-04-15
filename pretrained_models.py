@@ -16,6 +16,8 @@ img = Image.open(requests.get(url, stream=True).raw)
 # model = models.mobilenet_v2(pretrained=True)
 model = models.resnet34(pretrained=True)
 
+# C:\Users\HP\.cache\torch\hub\checkpoints
+
 # TODO zasto je sporije na GPU?
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 device = torch.device("cpu")
