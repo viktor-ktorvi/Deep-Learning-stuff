@@ -48,6 +48,32 @@ def getSignal(wave, amp, freq, phase, t):
     return amp * wave(2 * np.pi * freq * t + phase)
 
 
+def generateSignalData(num_signals, signal_len, classes, waves, amp_max, amp_min, freq_max, freq_min):
+    signal_data = np.zeros((num_signals, signal_len))
+    signal_labels = np.zeros((num_signals, 1))
+
+    # make a signal from a random class with random parameters
+    for i in range(num_signals):
+        chooser = np.random.randint(len(classes))
+        signal_labels[i] = chooser
+
+        # uniformally pick parameters
+        amp = np.random.rand() * (amp_max - amp_min) + amp_min
+        freq = np.random.rand() * (freq_max - freq_min) + freq_min
+        phase = np.random.rand() * 2 * np.pi
+
+        # awgn for good measure
+        noise_std = 0.1 * amp
+
+        signal_data[i, :] = getSignal(wave=waves[chooser],
+                                      amp=amp,
+                                      freq=freq,
+                                      phase=phase,
+                                      t=t).reshape(1, signal_len) + noise_std * np.random.randn(1, signal_len)
+
+    return signal_data, signal_labels
+
+
 if __name__ == "__main__":
     # %% Signal parameters
     classes = ["sin", "square", "saw"]
@@ -70,36 +96,20 @@ if __name__ == "__main__":
     train_num = round(holdout_ratio * num_signals)
     test_num = num_signals - train_num
     # %% Generating data
-    signal_data = np.zeros((num_signals, signal_len))
-    signal_labels = np.zeros((num_signals, 1))
-
-    # make a signal from a random class with random parameters
-    for i in range(num_signals):
-        chooser = np.random.randint(len(classes))
-        signal_labels[i] = chooser
-
-        # uniformally pick parameters
-        amp = np.random.rand() * (amp_max - amp_min) + amp_min
-        freq = np.random.rand() * (freq_max - freq_min) + freq_min
-        phase = np.random.rand() * 2 * np.pi
-
-        # awgn for good measure
-        noise_std = 0.1 * amp
-
-        signal_data[i, :] = getSignal(wave=waves[chooser],
-                                      amp=amp,
-                                      freq=freq,
-                                      phase=phase,
-                                      t=t).reshape(1, signal_len) + noise_std * np.random.randn(1, signal_len)
+    signal_data, signal_labels = generateSignalData(num_signals=num_signals,
+                                                    signal_len=signal_len,
+                                                    classes=classes,
+                                                    waves=waves,
+                                                    amp_max=amp_max,
+                                                    amp_min=amp_min,
+                                                    freq_max=freq_max,
+                                                    freq_min=freq_min)
     # %% Setting up the data
     # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     device = torch.device("cpu")  # CPU because I have a weak GPU
     print(device)
 
-    tensor_x = torch.tensor(signal_data)
-    tensor_y = torch.tensor(signal_labels)
-    tensor_y = tensor_y.type(torch.LongTensor)
-    dataset = TensorDataset(tensor_x, tensor_y)
+    dataset = TensorDataset(torch.tensor(signal_data), torch.tensor(signal_labels).type(torch.LongTensor))
 
     # holdout
     train_set, test_set = torch.utils.data.random_split(dataset, [train_num, test_num])
