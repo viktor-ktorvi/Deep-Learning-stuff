@@ -43,8 +43,8 @@ class Network(nn.Module):
 
         # TODO configure padding so that the edges look better
         self.pool = nn.MaxPool1d(kernel_pool)
-        self.conv1 = nn.Conv1d(in_channels=1, out_channels=6, kernel_size=kernel_conv1)
-        self.conv2 = nn.Conv1d(in_channels=6, out_channels=16, kernel_size=kernel_conv2)
+        self.conv1 = nn.Conv1d(in_channels=1, out_channels=10, kernel_size=kernel_conv1)
+        self.conv2 = nn.Conv1d(in_channels=10, out_channels=30, kernel_size=kernel_conv2)
 
         stride = 2
         out_deconv1 = round(signal_len / 2)
@@ -53,8 +53,8 @@ class Network(nn.Module):
         kernel_deconv1 = out_deconv1 - stride * (out_conv2 - 1)
         kernel_deconv2 = signal_len - stride * (out_deconv1 - 1)
 
-        self.deconv1 = nn.ConvTranspose1d(in_channels=16, out_channels=6, stride=stride, kernel_size=kernel_deconv1)
-        self.deconv2 = nn.ConvTranspose1d(in_channels=6, out_channels=1, stride=stride, kernel_size=kernel_deconv2)
+        self.deconv1 = nn.ConvTranspose1d(in_channels=30, out_channels=15, stride=stride, kernel_size=kernel_deconv1)
+        self.deconv2 = nn.ConvTranspose1d(in_channels=15, out_channels=1, stride=stride, kernel_size=kernel_deconv2)
 
     def forward(self, x):
 
@@ -208,3 +208,4 @@ if __name__ == "__main__":
     plt.ylabel("signal [num]")
     plt.legend()
     plt.show()
+
