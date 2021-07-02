@@ -80,6 +80,8 @@ if __name__ == "__main__":
     amp_min = 0
     freq_max = 100
     freq_min = 10
+
+    noise_std_percent = 0.1
     # %% Training parameters
     num_signals = 10000
     num_epochs = 12
@@ -105,7 +107,7 @@ if __name__ == "__main__":
         phase = np.random.rand() * 2 * np.pi
 
         # awgn for good measure
-        noise_std = 0.1 * amp
+        noise_std = noise_std_percent * amp
 
         signal_labels[i, :] = getSignal(wave=waves[chooser],
                                         amp=amp,
