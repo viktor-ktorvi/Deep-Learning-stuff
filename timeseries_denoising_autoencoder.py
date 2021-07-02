@@ -116,6 +116,8 @@ if __name__ == "__main__":
                                         t=t).reshape(1, signal_len)
 
         signal_data[i, :] = signal_labels[i, :] + noise_std * np.random.randn(1, signal_len)
+
+    data_std = np.std(signal_data)
     # %% Visualizing the data
     plt.figure()
     plt.title("No noise VS noise")
@@ -140,6 +142,7 @@ if __name__ == "__main__":
     train_dataloader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
     test_dataloader = DataLoader(test_set, batch_size=test_num)
     # %% Training
+    torch.manual_seed(26)
     model = Network(signal_len)
     model = model.to(device)
     criterion = nn.MSELoss()
@@ -154,7 +157,7 @@ if __name__ == "__main__":
 
             optimizer.zero_grad()
 
-            outputs = model(test_signals.unsqueeze(1))
+            outputs = model(test_signals.unsqueeze(1) / data_std) * data_std
             loss = criterion(outputs, test_labels.view(outputs.shape))
             loss.backward()
             optimizer.step()
@@ -176,7 +179,7 @@ if __name__ == "__main__":
     with torch.no_grad():
         for data in test_dataloader:
             test_signals, test_labels = data[0].to(device, dtype=torch.float), data[1].to(device, dtype=torch.float)
-            outputs = model(test_signals.unsqueeze(1))
+            outputs = model(test_signals.unsqueeze(1) / data_std) * data_std
 
             mse = criterion(outputs, test_labels.view(outputs.shape))
             print("test MSE = %.3f" % mse)
