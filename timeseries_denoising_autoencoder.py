@@ -57,24 +57,24 @@ class Network(nn.Module):
         self.deconv2 = nn.ConvTranspose1d(in_channels=6, out_channels=1, stride=stride, kernel_size=kernel_deconv2)
 
     def forward(self, x):
-        # # encode
-        # x = self.pool(F.relu(self.conv1(x)))
-        # x = self.pool(F.relu(self.conv2(x)))
 
+        # encoder
+        # 1
         x = self.conv1(x)
         x = F.relu(x)
         x = self.pool(x)
 
+        # 2
         x = self.conv2(x)
         x = F.relu(x)
         x = self.pool(x)
 
-        # # decode
-        # x = F.relu(self.deconv1(x))
-        # x = self.deconv2(x)
-
+        # decoder
+        # 1
         x = self.deconv1(x)
         x = F.relu(x)
+
+        # 2
         x = self.deconv2(x)
 
         return x
