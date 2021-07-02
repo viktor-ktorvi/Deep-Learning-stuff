@@ -82,8 +82,8 @@ class Network(nn.Module):
 
 if __name__ == "__main__":
     # %% Signal parameters
-    classes = ["sin"]  # ["sin", "square", "saw"]
-    waves = [np.sin]  # [np.sin, signal.square, signal.sawtooth]
+    classes = ["square"]  # ["sin", "square", "saw"]
+    waves = [signal.square]  # [np.sin, signal.square, signal.sawtooth]
 
     Fs = 2000
     signal_len = 200
@@ -96,9 +96,9 @@ if __name__ == "__main__":
     noise_std_percent = 0.1
     # %% Training parameters
     num_signals = 10000
-    num_epochs = 12
+    num_epochs = 100
     batch_size = 64
-    lr = 0.004
+    lr = 0.003
     holdout_ratio = 0.7
 
     train_num = round(holdout_ratio * num_signals)
