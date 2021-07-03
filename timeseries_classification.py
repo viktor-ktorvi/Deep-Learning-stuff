@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from matplotlib import pyplot as plt
 from scipy import signal
-
+import time
 
 class Network(nn.Module):
     def __init__(self, signal_len, classes):
@@ -122,6 +122,8 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
+    start = time.time()
+    print("Training started")
     loss_array = []
     for epoch in range(num_epochs):
         running_loss = 0
@@ -144,6 +146,9 @@ if __name__ == "__main__":
 
         print("epoch: %d\tloss: %0.10f" % (epoch, running_loss))
         loss_array.append(running_loss)
+
+    end = time.time()
+    print("Training complete. It took %5.2f seconds" % (end - start))
 
     plt.figure()
     plt.title("Loss")

@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from matplotlib import pyplot as plt
 from scipy import signal
-
+import time
 from timeseries_classification import getSignal
 
 
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     noise_std_percent = 0.1
     # %% Training parameters
     num_signals = 10000
-    num_epochs = 100
+    num_epochs = 10
     batch_size = 64
     lr = 0.003
     holdout_ratio = 0.7
@@ -160,6 +160,9 @@ if __name__ == "__main__":
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
+    start = time.time()
+    print("Training started")
+
     loss_array = []
     for epoch in range(num_epochs):
         running_loss = 0
@@ -178,6 +181,9 @@ if __name__ == "__main__":
 
         print("epoch: %d\tloss: %0.10f" % (epoch, running_loss))
         loss_array.append(running_loss)
+
+    end = time.time()
+    print("Training complete. It took %5.2f seconds" % (end - start))
 
     plt.figure()
     plt.title("Loss")
